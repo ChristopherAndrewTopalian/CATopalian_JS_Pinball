@@ -5,6 +5,8 @@ A JavaScript Pinball app that is easy for beginners to learn.
 
 ![001](src/media/textures/screenshots/001.webp)
 
+Video: https://www.youtube.com/watch?v=WQ1hRvRQNAs
+
 ---
 
 How to Download this App
