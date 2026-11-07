@@ -1,0 +1,592 @@
+<!-- Dedicated to God the Father -->
+<!-- All Rights Reserved Christopher Andrew Topalian Copyright 2000-2026 -->
+<!-- https://github.com/ChristopherTopalian -->
+<!-- https://github.com/ChristopherAndrewTopalian -->
+<!-- CATopalian_JS_Pinball.html -->
+
+<!DOCTYPE html>
+<html lang = 'en'>
+<head>
+<title> CATopalian JS Pinball </title>
+
+<meta charset = 'UTF-8'>
+
+<meta name = 'viewport' content = 'width = device-width, initial-scale = 1.0'>
+
+<link rel = 'stylesheet' href = 'src/css/style001.css'>
+
+<link rel = "icon" href = "src/media/textures/icons/CATopalian_True_SI.webp" type = "image/png">
+
+<script src = 'src/js/1shortcuts/shortcuts.js'></script>
+
+<script src = 'src/js/2worldVariables/worldVariables.js'></script>
+
+<script src = 'src/js/interface/makeTitleOfApp.js'></script>
+
+<script src = 'src/js/sound/loadSounds.js'></script>
+
+<script src = 'src/js/sound/audioPlay.js'></script>
+
+<script src = 'src/js/sound/sounds.js'></script>
+
+<script src = 'src/js/sound/sound.js'></script>
+
+<script>
+
+function makeInterface()
+{
+    // Setup Layout Container
+    let container = ce('div');
+    container.id = 'gameContainer';
+    container.style.position = 'absolute';
+    container.style.width = '100%';
+    container.style.height = '100%';
+    ba(container);
+
+    // Setup Scoreboard
+    let scoreDiv = ce('div');
+    scoreDiv.id = 'scoreBoard';
+    scoreDiv.innerHTML = "SCORE: 0";
+    ba(scoreDiv);
+
+    // Define Table Boundaries
+    let cx = window.innerWidth / 2;
+    let tableWidth = 300; 
+    
+    walls.left = cx - (tableWidth / 2);
+    walls.right = cx + (tableWidth / 2);
+    walls.top = 0;
+    walls.bottom = window.innerHeight;
+
+    // Left Wall
+    let leftWall = ce('div');
+    leftWall.style.position = 'absolute';
+    leftWall.style.left = (walls.left - 20) + 'px';
+    leftWall.style.top = '0px';
+    leftWall.style.width = '20px';
+    leftWall.style.height = window.innerHeight + 'px';
+    leftWall.style.backgroundColor = '#333';
+    leftWall.style.border = '1px solid #555';
+    leftWall.style.boxShadow = '0 0 15px black';
+    container.append(leftWall);
+
+    // Right Wall
+    let rightWall = ce('div');
+    rightWall.style.position = 'absolute';
+    rightWall.style.left = walls.right + 'px';
+    rightWall.style.top = '0px';
+    rightWall.style.width = '20px';
+    rightWall.style.height = window.innerHeight + 'px';
+    rightWall.style.backgroundColor = '#333';
+    rightWall.style.border = '1px solid #555';
+    rightWall.style.boxShadow = '0 0 15px black';
+    container.append(rightWall);
+
+    // Top Cap Wall
+    let topWall = ce('div');
+    topWall.style.position = 'absolute';
+    topWall.style.left = walls.left + 'px';
+    topWall.style.top = '-50px';
+    topWall.style.width = tableWidth + 'px';
+    topWall.style.height = '50px';
+    topWall.style.backgroundColor = '#333';
+    topWall.style.border = '1px solid #555';
+    topWall.style.boxShadow = '0 0 15px black';
+    container.append(topWall);
+
+    // Left Bumper
+    let b1X = cx - 120;
+    let b1Y = 200;
+
+    let bumper1 = ce('div');
+    bumper1.id = 'bumper1';
+    bumper1.style.position = 'absolute';
+    bumper1.style.left = b1X + 'px';
+    bumper1.style.top = b1Y + 'px';
+    bumper1.style.backgroundColor = 'rgb(0, 0, 255)';
+    bumper1.style.width = '20px';
+    bumper1.style.height = '50px';
+    bumper1.style.borderRadius = '6px';
+    bumper1.style.boxShadow = '0 0 5px blue';
+    container.append(bumper1);
+
+    bumpers.push({
+        el: bumper1, x: b1X, y: b1Y, w: 20, h: 50, color: 'rgb(0, 0, 255)'
+    });
+
+    // Right Bumper
+    let b2X = cx + 100; 
+    let b2Y = 200;
+
+    let bumper2 = ce('div');
+    bumper2.id = 'bumper2';
+    bumper2.style.position = 'absolute';
+    bumper2.style.left = b2X + 'px';
+    bumper2.style.top = b2Y + 'px';
+    bumper2.style.backgroundColor = 'rgb(0, 0, 255)';
+    bumper2.style.width = '20px';
+    bumper2.style.height = '50px';
+    bumper2.style.borderRadius = '6px';
+    bumper2.style.boxShadow = '0 0 5px blue';
+    container.append(bumper2);
+
+    bumpers.push({
+        el: bumper2, x: b2X, y: b2Y, w: 20, h: 50, color: 'rgb(0, 0, 255)'
+    });
+
+    // Left Flipper
+    leftFlipper.x = walls.left + 50; 
+    leftFlipper.y = window.innerHeight - 60;
+    
+    leftFlipper.el = ce('div');
+    leftFlipper.el.style.position = 'absolute';
+    leftFlipper.el.style.width = leftFlipper.w + 'px';
+    leftFlipper.el.style.height = leftFlipper.h + 'px';
+    leftFlipper.el.style.backgroundColor = 'rgb(0, 0, 255)';
+    leftFlipper.el.style.borderRadius = '12px';
+    leftFlipper.el.style.border = '2px solid white';
+    leftFlipper.el.style.transformOrigin = '10px 50%';
+    leftFlipper.el.style.top = (leftFlipper.y - leftFlipper.h / 2) + 'px';
+    leftFlipper.el.style.left = (leftFlipper.x - 10) + 'px';
+    container.append(leftFlipper.el);
+
+    // Right Flipper
+    rightFlipper.x = walls.right - 50;
+    rightFlipper.y = window.innerHeight - 60;
+    
+    rightFlipper.el = ce('div');
+    rightFlipper.el.style.position = 'absolute';
+    rightFlipper.el.style.width = rightFlipper.w + 'px';
+    rightFlipper.el.style.height = rightFlipper.h + 'px';
+    rightFlipper.el.style.backgroundColor = 'rgb(0, 0, 255)';
+    rightFlipper.el.style.borderRadius = '12px';
+    rightFlipper.el.style.border = '2px solid white';
+    rightFlipper.el.style.transformOrigin = (rightFlipper.w - 10) + 'px 50%';
+    rightFlipper.el.style.top = (rightFlipper.y - rightFlipper.h / 2) + 'px';
+    rightFlipper.el.style.left = (rightFlipper.x - rightFlipper.w + 10) + 'px';
+    container.append(rightFlipper.el);
+
+    // The Ball
+    ball.el = ce('div');
+    ball.el.style.position = 'absolute';
+    ball.el.style.width = (ball.radius * 2) + 'px';
+    ball.el.style.height = (ball.radius * 2) + 'px';
+    ball.el.style.backgroundColor = 'silver';
+    ball.el.style.borderRadius = '50%';
+    ball.el.style.zIndex = '5';
+    container.append(ball.el);
+    
+    // Set initial ball placement
+    resetBall();
+
+    //-- Start the Physics Engine --//
+    requestAnimationFrame(gameLoop);
+}
+
+/*
+function makeApp()
+{
+    // setup layout
+    let container = ce('div');
+    container.id = 'gameContainer';
+    container.style.position = 'absolute';
+    container.style.width = '100%';
+    container.style.height = '100%';
+    ba(container);
+
+    //-//
+
+    let scoreDiv = ce('div');
+    scoreDiv.id = 'scoreBoard';
+    scoreDiv.innerHTML = "SCORE: 0";
+    ba(scoreDiv);
+
+    //-//
+
+    // define table boundaries
+    let cx = window.innerWidth / 2;
+    let tableWidth = 300//walls.left = cx - (tableWidth/2);
+    //walls.right = cx + (tableWidth/2);; 
+    
+    walls.left = cx - (tableWidth/2);
+    walls.right = cx + (tableWidth/2);
+
+    walls.top = 0;
+    walls.bottom = window.innerHeight;
+
+    // Create Walls
+    createWall(walls.left - 20, 0, 20, window.innerHeight);  // Left
+
+    createWall(walls.right, 0, 20, window.innerHeight);  // Right
+
+    createWall(walls.left, -50, tableWidth, 50);  // Top cap
+
+    // create Ball
+    ball.el = ce('div');
+    Object.assign(ball.el.style, {
+        position: 'absolute',
+        width: (ball.radius * 2) + 'px',
+        height: (ball.radius * 2) + 'px',
+        backgroundColor: 'silver',
+        borderRadius: '50%',
+        zIndex: '5'
+    });
+    container.append(ball.el);
+    resetBall();
+
+    // create Flippers
+    leftFlipper.x = walls.left + 50; 
+    leftFlipper.y = window.innerHeight - 60;
+    leftFlipper.el = createFlipperElement(leftFlipper, 'left');
+    container.append(leftFlipper.el);
+
+    rightFlipper.x = walls.right - 50;
+    rightFlipper.y = window.innerHeight - 60;
+    rightFlipper.el = createFlipperElement(rightFlipper, 'right');
+    container.append(rightFlipper.el);
+
+    // start Physics Loop
+    requestAnimationFrame(gameLoop);
+}
+
+function createWall(x, y, w, h)
+{
+    let wEl = ce('div');
+    Object.assign(wEl.style, {
+        position: 'absolute',
+        left: x + 'px', top: y + 'px',
+        width: w + 'px', height: h + 'px',
+        backgroundColor: '#333',
+        border: '1px solid #555',
+        boxShadow: '0 0 15px black'
+    });
+    ge('gameContainer').append(wEl);
+}
+
+function createFlipperElement(flipperObj, side)
+{
+    let flipper = ce('div');
+    flipper.style.position = 'absolute';
+    flipper.style.width = flipperObj.w + 'px';
+    flipper.style.height = flipperObj.h + 'px';
+    flipper.style.backgroundColor = 'rgb(0, 0, 255)';
+    flipper.style.borderRadius = '12px';
+    flipper.style.border = '2px solid white';
+    flipper.style.transformOrigin = side === 'left' ? '10px 50%' : (flipperObj.w - 10) + 'px 50%';
+    flipper.style.top = (flipperObj.y - flipperObj.h/2) + 'px';
+
+    // Adjust left position to account for pivot offset
+    flipper.style.left = side === 'left' ? (flipperObj.x - 10) + 'px' : (flipperObj.x - flipperObj.w + 10) + 'px';
+
+    return flipper;
+}
+
+function makeBumper(whichId, x, y)
+{
+    // bumper
+    let bumper = ce('div');
+    bumper.id = whichId;
+    bumper.style.position = 'absolute';
+    bumper.style.left = x + 'px';
+    bumper.style.top = y + 'px';
+    bumper.style.backgroundColor = 'rgb(0, 0, 255)';
+    bumper.style.width = '20px';
+    bumper.style.height = '50px';
+    bumper.style.borderRadius = '6px';
+    bumper.style.boxShadow = '0 0 5px blue';
+    ba(bumper);
+
+    // add to Physics Array
+    bumpers.push({
+        el: bumper,
+        x: x,
+        y: y,
+        w: 20,
+        h: 50,
+        color: 'rgb(0, 0, 255)' // store color for flashing effect
+    });
+}
+    */
+
+function resetBall()
+{
+    ball.x = walls.left + Math.random() * (walls.right - walls.left);
+
+    ball.y = 50;
+
+    ball.vx = (Math.random() * 6) - 3;
+
+    ball.vy = 0;
+}
+
+// INPUT
+window.addEventListener('keydown', function(e)
+{
+    if(e.key === 'ArrowLeft') leftFlipper.targetAngle = leftFlipper.activeAngle;
+
+    if(e.key === 'ArrowRight') rightFlipper.targetAngle = rightFlipper.activeAngle;
+});
+
+window.addEventListener('keyup', function(e)
+{
+    if(e.key === 'ArrowLeft') leftFlipper.targetAngle = leftFlipper.restAngle;
+
+    if(e.key === 'ArrowRight') rightFlipper.targetAngle = rightFlipper.restAngle;
+});
+
+// PHYSICS ENGINE
+
+function gameLoop()
+{
+    // move Ball
+    ball.vy += GRAVITY;
+    ball.vx *= FRICTION;
+    ball.vy *= FRICTION;
+
+    // apply Speed Limit (Crucial for stability)
+    let speed = Math.sqrt(ball.vx*ball.vx + ball.vy*ball.vy);
+
+    if (speed > MAX_SPEED) 
+    {
+        let ratio = MAX_SPEED / speed;
+        ball.vx *= ratio;
+        ball.vy *= ratio;
+    }
+
+    ball.x += ball.vx;
+    ball.y += ball.vy;
+
+    // move Flippers
+    updateFlipper(leftFlipper);
+    updateFlipper(rightFlipper);
+
+    // collisions
+    checkWallCollisions();
+    checkBumperCollisions(); // Check bumpers
+    checkFlipperCollision(leftFlipper, 'left');
+    checkFlipperCollision(rightFlipper, 'right');
+
+    // game over / reset
+    if (ball.y > window.innerHeight + 50) 
+    {
+        score = 0;
+        ge('scoreBoard').innerHTML = "SCORE: " + score;
+        resetBall();
+    }
+
+    // render
+    ball.el.style.left = (ball.x - ball.radius) + 'px';
+    ball.el.style.top = (ball.y - ball.radius) + 'px';
+    
+    leftFlipper.el.style.transform = `rotate(${leftFlipper.angle}deg)`;
+    rightFlipper.el.style.transform = `rotate(${rightFlipper.angle}deg)`;
+
+    requestAnimationFrame(gameLoop);
+}
+
+function updateFlipper(f)
+{
+    let diff = f.targetAngle - f.angle;
+    // move flipper towards target (Animation)
+    let move = diff * 0.2; 
+    f.angle += move;
+
+    // store velocity for physics kick calculation (Degrees per frame)
+    f.currentVelocity = move; 
+}
+
+function checkWallCollisions()
+{
+    // left
+    if (ball.x - ball.radius < walls.left)
+    {
+        ball.x = walls.left + ball.radius;
+        ball.vx *= -WALL_BOUNCE;
+    }
+
+    // right
+    if (ball.x + ball.radius > walls.right)
+    {
+        ball.x = walls.right - ball.radius;
+        ball.vx *= -WALL_BOUNCE;
+    }
+
+    // top
+    if (ball.y - ball.radius < walls.top)
+    {
+        ball.y = walls.top + ball.radius;
+        ball.vy *= -WALL_BOUNCE;
+    }
+}
+
+function checkBumperCollisions() 
+{
+    for (let b of bumpers) 
+    {
+        // find closest point on rectangle to circle center
+        let closestX = Math.max(b.x, Math.min(b.x + b.w, ball.x));
+
+        let closestY = Math.max(b.y, Math.min(b.y + b.h, ball.y));
+
+        let distX = ball.x - closestX;
+        let distY = ball.y - closestY;
+        let distSq = distX * distX + distY * distY;
+
+        // check intersection
+        if (distSq < (ball.radius * ball.radius) && distSq > 0) 
+        {
+            //clickSound();
+            audioPlay('sfx_blip_001', 1.0);
+
+            let distance = Math.sqrt(distSq);
+
+            // normalize
+            let nx = distX / distance;
+            let ny = distY / distance;
+
+            // push out
+            let overlap = ball.radius - distance;
+            ball.x += nx * overlap;
+            ball.y += ny * overlap;
+
+            // reflect Velocity
+            let dot = ball.vx * nx + ball.vy * ny;
+            ball.vx = ball.vx - 2 * dot * nx;
+            ball.vy = ball.vy - 2 * dot * ny;
+
+            // add Pop (Energy)
+            ball.vx *= BUMPER_BOUNCE;
+            ball.vy *= BUMPER_BOUNCE;
+
+            // score and effects
+            score += 50;
+            ge('scoreBoard').innerHTML = "SCORE: " + score;
+
+            // flash effect
+            b.el.style.backgroundColor = 'white';
+            setTimeout(function()
+            {
+                b.el.style.backgroundColor = b.color;
+            }, 100);
+        }
+    }
+}
+
+function checkFlipperCollision(f, side)
+{
+    // convert angle to radians
+    let rad = f.angle * (Math.PI / 180);
+
+    // transform Ball to Flipper's Local Space
+    let dx = ball.x - f.x;
+    let dy = ball.y - f.y;
+
+    let localX = dx * Math.cos(-rad) - dy * Math.sin(-rad);
+    let localY = dx * Math.sin(-rad) + dy * Math.cos(-rad);
+
+    // find Closest Point
+    let flipperStart = (side === 'left') ? 0 : -f.w;
+    let flipperEnd   = (side === 'left') ? f.w : 0;
+
+    let closestX = Math.max(flipperStart, Math.min(flipperEnd, localX));
+    let closestY = Math.max(-f.h/2, Math.min(f.h/2, localY));
+
+    // check Distance
+    let distX = localX - closestX;
+    let distY = localY - closestY;
+    let distSq = distX*distX + distY*distY;
+
+    if (distSq < (ball.radius * ball.radius))
+    {
+        let distance = Math.sqrt(distSq);
+        
+        if (distance === 0)
+        {
+            distance = 0.1;
+            distY = -1; 
+        }
+
+        // resolve Overlap
+        let overlap = ball.radius - distance;
+        let normalX = distX / distance;
+        let normalY = distY / distance;
+
+        localX += normalX * overlap;
+        localY += normalY * overlap;
+
+        let worldX = localX * Math.cos(rad) - localY * Math.sin(rad);
+        let worldY = localX * Math.sin(rad) + localY * Math.cos(rad);
+        
+        ball.x = f.x + worldX;
+        ball.y = f.y + worldY;
+
+        // bounce Velocity
+        let localVx = ball.vx * Math.cos(-rad) - ball.vy * Math.sin(-rad);
+        let localVy = ball.vx * Math.sin(-rad) + ball.vy * Math.cos(-rad);
+
+        let dot = localVx * normalX + localVy * normalY;
+        localVx -= 2 * dot * normalX;
+        localVy -= 2 * dot * normalY;
+
+        // apply Kick
+        if (normalY < 0)
+        {
+            // clickSound();
+
+            let leverArm = Math.abs(closestX); 
+            let kickForce = f.currentVelocity * leverArm * 0.1; 
+            localVy += -Math.abs(kickForce);
+            
+            score += 10;
+            ge('scoreBoard').innerHTML = "SCORE: " + score;
+        }
+
+        localVx *= FLIPPER_BOUNCE;
+        localVy *= FLIPPER_BOUNCE;
+
+        ball.vx = localVx * Math.cos(rad) - localVy * Math.sin(rad);
+        ball.vy = localVx * Math.sin(rad) + localVy * Math.cos(rad);
+    }
+}
+
+function makeBackground()
+{
+    // 1. Create a DIV instead of an IMG
+    let bg = ce('div');
+    // make it cover the whole screen
+    bg.style.position = 'fixed';
+    bg.style.top = '0';
+    bg.style.left = '0';
+    bg.style.width = '100%';
+    bg.style.height = '100%';
+    bg.style.zIndex = '-1'; 
+    bg.style.backgroundImage = 'url("src/media/textures/bg/space_001.jpg")';
+    bg.style.backgroundRepeat = 'repeat';
+
+    // controls how big the tile is. 
+    // If image is too huge, set this to something like '500px'. 
+    // If removed, it uses the image's real size.
+    bg.style.backgroundSize = '400px';  //auto
+    ba(bg);
+}
+
+function whenLoaded()
+{
+    loadSounds(sounds);
+
+    makeInterface();
+
+    makeBackground();
+    makeTitleOfApp();
+}
+
+</script>
+
+</head>
+
+<body onload = 'whenLoaded();'>
+
+</body>
+
+</html>
+
