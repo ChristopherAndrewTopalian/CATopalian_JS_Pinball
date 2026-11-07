@@ -3,6 +3,10 @@ A JavaScript Pinball app that is easy for beginners to learn.
 
 ---
 
+![001](src/media/textures/screenshots/001.webp)
+
+---
+
 How to Download this App
 1. Click the green Code Button on this github page
 2. Choose Download ZIP
