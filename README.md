@@ -5,6 +5,8 @@ A JavaScript Pinball app that is easy for beginners to learn.
 
 ![001](src/media/textures/screenshots/001.webp)
 
+Use App: https://christopherandrewtopalian.github.io/CATopalian_JS_Pinball/CATopalian_JS_Pinball.html
+
 Video: https://www.youtube.com/watch?v=WQ1hRvRQNAs
 
 ---
